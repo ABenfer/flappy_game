@@ -7,21 +7,21 @@
 
 This is just a brief summary of the most interesting parts of the code. If you have any further questions, feel free to email me at <achim.benfer@outlook.de>.
 
-To run the code make sure the python file has the permission to be executed. There are two config files: The first one (“flappy_config.py”) is a save version that does around 60 points with a very high chance of succeeding. The second one (“flappy_config_fast.py”) is more aggressive and aims for a score of 100+. However it fails in about 60% of tries. To try the fast config, just rename the config file to “flappy_config.py”.
+To run the code make sure the python file has the permission to be executed. There are two config files: The first one (“flappy_config.py”) is a save version that does around 60 points with a very high chance of succeeding. The second one (“flappy_config_fast.py”) is more aggressive and aims for a score of 100+. However, it fails in about 60% of tries. To try the fast config, just rename the config file to “flappy_config.py”.
 
 ## Code Breakdown
 
-I structured the task in the subtasks perception and mapping, state handling and acting. In the beginning I used the three different states, exploring, positioning and full throttle to manage the task. Over time the subsystems got better, which allowed me to combined all the states to a continuous perception, mapping and acting state. 
+I structured the task in the subtasks perception and mapping, state handling and acting. In the beginning I used the three different states, exploring, positioning and full throttle to manage the task. Over time the subsystems got better, which allowed me to combine all the states to a continuous perception, mapping and acting state. 
 
 ### Perception and Mapping
-To accomplish the mapping task I had multiple concepts. One was to create an occupancy grid and then aim for the one that was occupied the least. The concept worked but had some problems for example if one wall occupied two rows in x-direction. In the end I used a point cloud and searched for gaps of a minimum size in y-direction. Because the gaps are only in a certain y-range I capped the area of interest. If it detects more than one gap, it takes the one closest to its current y-position, which works better than looking for the biggest gap. It then outputs the center of the gap. 
+To accomplish the mapping task I had multiple concepts. One was to create an occupancy grid and then aim for the cell that was occupied the least. The concept worked but had some problems for example if one wall occupied two rows in x-direction. A point cloud yielded much higher accuracy and more robust results. In the point cloud I search for gaps of a minimum size in y-direction. Because the gaps are only in a certain y-range I capped the area of interest. If it detects more than one gap, it takes the one closest to its current y-position, which works better than looking for the biggest gap. It then outputs the center of the gap. 
 
-The walls are detected in a two-step process. The first step is inaccurate but detects the front of the wall before it enters the one before. In the following steps it then increases the accuracy of the approximation. The exact position of the wall is crucial as it is important to adjust the y-position for the next wall as soon as possible. If it adjusts the position to early it hits the current wall.
+The walls are detected in a two-step process. The first step is inaccurate but fast and detects the front of the wall before it enters the one before. In the following steps it then increases the accuracy of the approximation. The exact position of the wall is crucial as it is important to adjust the y-position for the next wall as soon as possible. If it adjusts the position to early it hits the current wall.
 
 ### Acting
-To control the bird I used a P-controller for the x-speed. It doesn’t make a big difference if you use variable speeds in x-direction, so I just used a static velocity. In case the bird is completely off, it activates an emergency brake, that does maximum deceleration. However the effect of it is very little.
+To control the bird I used a P-controller for the x-speed. It doesn't make a big difference if you use variable speeds in x-direction, so I used a static velocity. In case the bird is completely off, it activates an emergency brake, that does maximum deceleration. However, the effect of it is very little.
 
-In y-direction I wanted to define the position instead of the speed. As a consequence I built a 2 stage cascaded PD-controller. The first stage controls the position and the second one the y-speed. The integral element is not needed, because there is no noice and therefore no stationary inaccuracy. 
+In y-direction I wanted to define the position instead of the speed. I built a 2 stage cascaded PD-controller to archieve that. The first stage controls the position and the second one the y-speed. The integral element is not needed, because there is no noice and therefore no stationary inaccuracy. 
 
 ### Visualisation
 To analyse errors in the code and to tune the model I created visualisations. As you can see the main limitation of the automation and the reason I think I am approaching a limit is the acceleration in y-direction, which is capped by the game.
