@@ -98,7 +98,7 @@ class Node:
 			self.write_files()
 
 
-	def state_1(self): #Vollgas
+	def state_1(self):
 		self.v_x_ref = conf.v_x_max
 		self.y_ref = self.hole_pos
 		self.wiggle = False
