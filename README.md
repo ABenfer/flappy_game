@@ -3,11 +3,9 @@
 [Original link](https://github.com/JohsBL/flappy_automation_test)
 
 
-
-
 This is just a brief summary of the most interesting parts of the code. If you have any further questions, feel free to email me at <achim.benfer@outlook.de>.
 
-To run the code make sure the python file has the permission to be executed. There are two config files: The first one (“flappy_config.py”) is a save version that does around 60 points with a very high chance of succeeding. The second one (“flappy_config_fast.py”) is more aggressive and aims for a score of 100+. However, it fails in about 60% of tries. To try the fast config, just rename the config file to “flappy_config.py”.
+To run the code make sure the python file has the permission to be executed. There are two config files: The first one ("flappy_config.py") is a save version that does around 60 points with a very high chance of succeeding. The second one ("flappy_config_fast.py") is more aggressive and aims for a score of 100+. However, it fails in about 60% of tries. To try the fast config, just rename the config file to "flappy_config.py".
 
 ## Code Breakdown
 
@@ -39,6 +37,6 @@ In this picture you can see the opposite error. It took too long to detect a val
 ![Late gap detection](https://paper-attachments.dropbox.com/s_BAA2E558C14F7C8036E2E8CF3D61765F9827C058A70CE5AD1203D4919BF35D00_1657368197493_test-14.png)
 
 
-If you want to create the illustrations on your own, change “write_files” in the config file to True and increase “point_list_length” to 100.000 (it caps the point list to a size of 500 to reduce computing time). Then run “illustrate.py” with the files in the directory specified in the config file as “f_dir”.
+If you want to create the illustrations on your own, change "write_files" in the config file to True and increase "point_list_length" to 100.000 (it caps the point list to a size of 500 to reduce computing time). Then run "illustrate.py" with the files in the directory specified in the config file as "f_dir".
 
-As a conclusion I think I got close to the optimum solution. There could be some potential in having a dynamic x-speed depending on the y-distance to the gap. However as the maximum acceleration in x-direction is very small, the potential is limited. Also tuning the controller further could result in less overshoot crashes or faster reaction time.
+To conclude, I see some potential in having a dynamic x-speed depending on the y-distance to the gap. However, as the maximum acceleration in x-direction is very small, the potential is limited. Also tuning the controller further could result in less overshoot crashes or faster reaction time.

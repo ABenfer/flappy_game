@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import rospy
 import numpy as np
-from math import sin, cos, pi
+from math import sin, cos
 from sensor_msgs.msg import LaserScan
 from geometry_msgs.msg import Vector3
 import flappy_config as conf
@@ -42,7 +42,6 @@ class Node:
 		self.ticks = 0
 
 		self.state = 0
-		self.last_state_change = 0
 		self.curr_wall = 0
 		self.wall_pos = []
 		self.hole_pos = 2
@@ -76,9 +75,7 @@ class Node:
 		ranges = np.array(msg.ranges)
 		alpha = msg.angle_increment
 
-		if not self.initiated:
-			self.initiate(ranges, alpha) #evaluate y-abs
-			print("initialised ver: 0.2")
+		if not self.initiated: self.initiate(ranges, alpha) # evaluate y-abs
 
 		# Perception and Mapping
 		self.extend_point_list(ranges, alpha)
@@ -90,7 +87,7 @@ class Node:
 		if self.curr_wall != -1: self.state_1()
 
 		# Acting
-		self.v_controller()
+		self.controller()
 
 		self.ticks += 1
 		if self.ticks % 30 == 0:
@@ -128,7 +125,7 @@ class Node:
 	def update_current_wall(self):
 		body_size = conf.body_size_slow if self.v_x < 0.08 else conf.body_size_fast
 		wall_ahead = np.array(self.wall_pos) + body_size > self.x 
-		if np.any(wall_ahead): self.curr_wall = np.where(wall_ahead == True)[0][0] #wall is the first one ahead
+		if np.any(wall_ahead): self.curr_wall = np.where(wall_ahead == True)[0][0] # wall is the first one ahead
 		else: self.curr_wall = len(wall_ahead) - 1
 
 
@@ -136,7 +133,7 @@ class Node:
 		ps = np.array(self.points)
 		if len(self.wall_pos) > 0:
 
-			# filter points in realistic x range and y range
+			# filter points in realistic x- and y-range
 			x_min = self.wall_pos[self.curr_wall] + conf.hole_x_rel_range[0]
 			x_max = self.wall_pos[self.curr_wall] + conf.hole_x_rel_range[1]
 			ps_cut_x = ps[np.where((ps[:,0] > x_min) & (ps[:,0] < x_max))]
@@ -187,7 +184,7 @@ class Node:
 		return [x,y]
 
 
-	def v_controller(self):
+	def controller(self):
 		# y Wiggleing
 		if self.wiggle: #wiggling
 			if self.ticks / conf.wiggle["ticks"] % 2 == 0:
